@@ -21,13 +21,18 @@ Fluxo principal:
 ---
 
 
-ENV `
-DATABASE_URL="postgresql://postgres:"password"@db."instance".supabase.co:5432/postgres"
-SUPABASE_URL="https://"instance">.supabase.co"
-SUPABASE_SERVICE_ROLE_KEY=""YOUR SERVICE KEY""
+## 🌐 Variáveis de Ambiente (`.env`)
 
+Antes de iniciar o projeto, configure o arquivo `.env` na raiz do projeto com suas credenciais do **Supabase** e do **PostgreSQL**.
 
-`
+```env
+# Banco de Dados (Prisma)
+DATABASE_URL="postgresql://postgres:<PASSWORD>@db.<INSTANCE>.supabase.co:5432/postgres"
+
+# Configuração do Supabase
+SUPABASE_URL="https://<INSTANCE>.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="<YOUR_SERVICE_ROLE_KEY>"
+
 
 
 ---
