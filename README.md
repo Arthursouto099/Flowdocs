@@ -20,6 +20,18 @@ Fluxo principal:
 
 ---
 
+
+ENV `
+DATABASE_URL="postgresql://postgres:<password>@db.<instance>.supabase.co:5432/postgres"
+SUPABASE_URL="https://<instance>.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY="<YOUR SERVICE KEY>"
+
+
+`
+
+
+---
+
 ## 🧱 Estrutura do Banco (Prisma Schema)
 
 ```prisma
