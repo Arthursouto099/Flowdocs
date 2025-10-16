@@ -3,13 +3,15 @@ import "dotenv/config"
 import cors from "cors"
 
 import { connectPrisma} from  "./lib/prisma"
+import appRouterV1 from "./routes/v1/router"
 
 const app = express()
 
-app.use(express.json())
-app.use(urlencoded({extended: true}))
 
 app.use(cors())
+app.use(express.json())
+app.use(urlencoded({extended: true}))
+app.use(appRouterV1)
 
 
 const port = process.env.PORT ?? 3000

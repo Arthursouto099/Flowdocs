@@ -56,6 +56,7 @@ model users {
   role         String?        @default("COLABORADOR")
   created_at   DateTime?      @default(now()) @db.Timestamp(6)
   updated_at   DateTime?      @default(now()) @db.Timestamp(6)
+  password String 
   activity_log activity_log[]
   files        files[]
   processes    processes[]
