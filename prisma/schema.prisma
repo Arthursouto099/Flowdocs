@@ -45,7 +45,10 @@ model processes {
   created_by  String?  
   collaborators users[] @relation("Collaborators") 
   files       files[]
-  users       users?    @relation("Created_by" ,fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user       users?    @relation("Created_by" ,fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id_module String
+  module  module @relation(fields: [id_module], references: [id])
+    tasks task[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -61,5 +64,52 @@ model users {
   files        files[]
   processes    processes[] @relation("Created_by")
   collaborators processes[] @relation("Collaborators")
+  orgs           Org[]           @relation("Owner")
+  collaboratorInOrgs Org[]       @relation("Collaborators_org")
+  modules module[] @relation("CreatedByMe")
+
+}
+
+enum TaskStatus {
+  CONCLUIDA
+  EM_ANDAMENTO
+  PENDENTE
+}
+
+model task {
+  id String @id @default(uuid())
+  title String
+  description String
+  status TaskStatus @default(EM_ANDAMENTO)
+  id_process String
+  process processes @relation(fields: [id_process], references: [id])
   
+
+}
+
+
+model module  {
+  id String @id @default(uuid())
+  name String
+  description String
+  processes processes[] 
+  background_image_url String?
+  identifier_code String
+  created_by String
+  created_at DateTime @default(now())
+  user users @relation("CreatedByMe", fields: [created_by], references: [id])
+  org Org @relation(fields: [identifier_code], references: [identifier_code])
+
+}
+
+model Org{
+  id               String    @id @default(uuid())
+  name             String
+  identifier_code  String @default(ulid()) @unique
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  created_by       String
+  owner            users     @relation("Owner", fields: [created_by], references: [id])
+  collaborators_org users[]  @relation("Collaborators_org")
+  module module[]
 }

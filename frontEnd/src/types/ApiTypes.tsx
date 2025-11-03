@@ -1,0 +1,50 @@
+export type Proccess = {
+    id: string;
+    name: string;
+    created_at: Date ;
+    updated_at: Date ;
+    description: string | null;
+    status: string | null;
+    created_by: string | null;
+    id_module: string;
+}
+
+export type Module = {
+    id?: string;
+    name: string;
+    description: string;
+    created_by: string;
+    background_image_url: string | null;
+    identifier_code: string;
+    created_at: Date
+    user: User
+}
+
+
+export type ModuleCreateInputs = {
+    id?: string;
+    name: string;
+    description: string;
+    created_by?: string;
+    background_image_url?: string | null;
+    indentifier_code?: string;
+}
+
+export type Org = {
+    id: string;
+    name: string;
+    created_at: Date;
+    updated_at: Date;
+    created_by: string;
+    identifier_code: string;
+}
+
+export type User = {
+    id: string;
+    email: string;
+    name: string;
+    role: string | null;
+    created_at: Date | null;
+    updated_at: Date | null;
+    password: string;
+}

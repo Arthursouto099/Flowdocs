@@ -1,4 +1,4 @@
-export  type Pagination = {
-    page: number | 1
-    limit: number | 10
+export type Pagination = {
+  page: number
+  limit: number
 }

@@ -5,6 +5,7 @@ import UseTheme from "../../hooks/UseTheme";
 interface CardProps {
   children: React.ReactNode;
   className?: string; // permite receber classes extras
+  onClick?: () => void
 }
 export function Separator() {
     const {darkMode} = UseTheme()
@@ -18,12 +19,14 @@ export function Separator() {
 
 
 
-export default function Card({children, className}: CardProps) {
+export default function Card({children, className, onClick}: CardProps) {
     const {darkMode} = UseTheme()
 
 
     return (
-        <div className={` rounded-lg shadow-lg border ${darkMode ? "bg-zinc-800 border-zinc-700" : "bg-gray-200 border-zinc-300"} ${className}`}>
+        <div onClick={() => {
+            if(onClick) onClick()
+        }} className={` rounded-lg shadow-lg border ${darkMode ? "bg-zinc-800 border-zinc-700" : "bg-gray-200 border-zinc-300"} ${className}`}>
             {children}
         </div>
     )

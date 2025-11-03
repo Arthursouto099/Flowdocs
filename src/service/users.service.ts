@@ -9,15 +9,31 @@ class UserError extends Error  {}
 
 const usersServices = {
 
-createUser: async ({data}: {data: Prisma.usersCreateInput}) => {
+createUser: async ({data, dataOrg}: {data: Prisma.usersCreateInput, dataOrg: {orgName: string, identifier_code: string}}) => {
     try {
-        const {password, ...safeUser} = await prisma.users.create({data: {
+        
+        const initializeOrg = await prisma.$transaction(async (tx) => {
+            const createdUser = await tx.users.create({data: {
             ...data,
             password: await bcrypt.hash(data.password, 8) ,
             role: "ADMIN"
         }})
 
-        return safeUser
+        const org = await tx.org.create({
+            data: {
+                name: dataOrg.orgName ?? `${createdUser.name} Organization`,
+                identifier_code: dataOrg.identifier_code,
+                owner: {connect: {id: createdUser.id}}
+            }
+        })
+
+        const {password, ...safeUser} = createdUser
+        return {user: safeUser, org}
+
+        })
+
+
+        return initializeOrg.user
 
     }
 
@@ -37,10 +53,10 @@ findUser: async (id: Prisma.usersWhereUniqueInput) => {
 },
 
 
-findUsers: async (pagination: Pagination, admin = false) => {
+findUsers: async (pagination: Pagination, admin = false, orgId: string) => {
     try{
         const skip = createSkip(pagination)
-        const users =  await prisma.users.findMany({skip, take: pagination.limit, include: {activity_log: true, files: true, processes: true}})
+        const users =  await prisma.users.findMany({skip, take: pagination.limit, include: {activity_log: true, files: true, processes: true}, where: {collaboratorInOrgs: {some: {id: orgId}}}})
         return admin ? users : users.map(({password,...user}) => user ) 
     }
     catch(e: unknown) {

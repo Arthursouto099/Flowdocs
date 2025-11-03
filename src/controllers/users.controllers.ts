@@ -11,7 +11,9 @@ export const usersController = {
 
     create: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const data = await usersServices.createUser(req.body)
+            const {name, password, orgName, email, identifier_code} = req.body
+            const data = await usersServices.createUser({data: {name, password, email}, dataOrg: {orgName, identifier_code }})
+           
             resOk({ res, status: 201, message: "created successfuly", data })
         }
 
@@ -23,8 +25,8 @@ export const usersController = {
 
     getAll: async (req: AuthRequest, res: Response, next: NextFunction) => {
         try {
-            const data = await usersServices.findUsers({ page: Number(req.params.page), limit: Number(req.params.limit) },
-                req.credentials && req.credentials.role === "ADMIN" ? true : false
+            const data = await usersServices.findUsers({ page: Number(req.query.page), limit: Number(req.query.limit)},
+                req.credentials && req.credentials.role === "ADMIN" ? true : false, req.credentials?.orgId ?? ""
             )
             resOk({ res, status: 200, message: "finded successfuly", data })
 
