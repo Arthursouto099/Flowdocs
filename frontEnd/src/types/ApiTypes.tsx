@@ -1,12 +1,13 @@
 export type Proccess = {
     id: string;
     name: string;
-    created_at: Date ;
-    updated_at: Date ;
+    created_at: Date;
+    updated_at: Date;
     description: string | null;
     status: string | null;
     created_by: string | null;
     id_module: string;
+    tasks: Task[]
 }
 
 export type Module = {
@@ -47,4 +48,19 @@ export type User = {
     created_at: Date | null;
     updated_at: Date | null;
     password: string;
+}
+
+export type Task = {
+    id_process: string;
+    id: string;
+    description: string;
+    status: "CONCLUIDA" | "EM_ANDAMENTO" | "PENDENTRE";
+    title: string;
+}
+
+
+export type TaskCreateInput = {
+    id_process: string
+    title: string
+    description: string
 }

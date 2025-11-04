@@ -8,6 +8,7 @@ import { FiGrid, FiPlus } from "react-icons/fi"
 import Modal from "../components/ui/Modal"
 import ProcessForm from "../components/ProcessForm"
 import ProcessList from "../components/ProcessList"
+import TaskForm from "../components/TaskForm"
 
 const findProcces = async ({ id_module, token, set, page }: { id_module: string, token: string, set: React.Dispatch<SetStateAction<Proccess[]>>, page: number }) => {
     const request = await axios.get(`http://localhost:3000/process/${id_module}/all`, {
@@ -51,6 +52,9 @@ export default function ModulePage() {
             <Modal open={isProcessOpen} onClose={() => {setProcessOpen(prev => !prev)}}>
                 <ProcessForm id_module={id!} onClose={() => {}}/>
             </Modal>
+
+
+          
 
             <div className="p-5">
                 <div className="flex flex-col gap-4">

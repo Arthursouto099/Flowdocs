@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import moduleService from "../service/module.service"
 import { resOk } from "../utils/ok"
 import { AuthRequest } from "../types/AuthRequest"
-import { prisma } from "../lib/prisma"
+
 
 const moduleController = {
 

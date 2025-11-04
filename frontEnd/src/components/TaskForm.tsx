@@ -1,23 +1,20 @@
-
+import { FaTasks } from "react-icons/fa";
 import UseTheme from "../hooks/UseTheme";
 import { UseUserCredentials } from "../hooks/UseUserCredentials";
-import type { Proccess } from "../types/ApiTypes";
+import type {  Task, TaskCreateInput } from "../types/ApiTypes";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FiRepeat } from "react-icons/fi";
 
 
 
 
 
 
-export default function ProcessForm({data, onClose, id_module}: {data?: Proccess, onClose: () => void, id_module: string }) {
-    const [process, setProcess] = useState<{name: string, description: string, id_module: string}>({name: "", description: "", id_module: ""})
+export default function TaskForm({data, onClose, id_process}: {data?: Task, onClose: () => void, id_process: string }) {
+    const [task, setTask] = useState<TaskCreateInput>({title: "", description: "", id_process: ""})
     const {darkMode} = UseTheme()
-    const { token} = UseUserCredentials()
-
-    
+    const {token} = UseUserCredentials()
     
     onClose()
 
@@ -34,11 +31,12 @@ export default function ProcessForm({data, onClose, id_module}: {data?: Proccess
         e.preventDefault()
         
           try {
-            const request = await axios.post(`http://localhost:3000/process/create/${id_module}`, {
-            name: process?.name,
-            description: process?.description,
+            const request = await axios.post(`http://localhost:3000/process/task/create/${id_process}`, {
+            title: task?.title,
+            description: task?.description
         }, {headers: {Authorization: `Bearer ${token}`}})
-
+        
+        console.log(request.data)
       
         
         toast.success(request.data.message)
@@ -59,17 +57,17 @@ export default function ProcessForm({data, onClose, id_module}: {data?: Proccess
           <form onSubmit={onSubmit} className="grid grid-cols-2 gap-4 w-96 p-6  rounded shadow">
 
                             <label className="flex flex-col col-span-2">
-                                <span className="text-sm font-semibold mb-1">Nome (Processo)</span>
+                                <span className="text-sm font-semibold mb-1">Titulo (Taks)</span>
                                 <input
                                     type="text"
-                                    name="name"
+                                    name="title"
                                     onChange={(e) => {
-                                       setProcess((prev) => ({
+                                       setTask((prev) => ({
                                         ...prev,
-                                        name: e.target.value
+                                        title: e.target.value
                                        }))
                                     }}
-                                    placeholder={`email@gmail.com`}
+                                    placeholder={`title`}
                                     className="border border-gray-300 rounded p-2 focus:outline-none focus:ring focus:ring-blue-400"
                                     required
                                 />
@@ -84,7 +82,7 @@ export default function ProcessForm({data, onClose, id_module}: {data?: Proccess
                                     
                                     name="description"
                                     onChange={(e) => {
-                                        setProcess((prev) => ({
+                                        setTask((prev) => ({
                                             ...prev,
                                             description: e.target.value
                                         }))
@@ -103,7 +101,7 @@ export default function ProcessForm({data, onClose, id_module}: {data?: Proccess
 
                                 className={`col-span-2  flex justify-center gap-4 ${darkMode ?  "bg-zinc-700" : "bg-zinc-300"}  text-white font-semibold rounded p-2  transition`}
                             >
-                                Cadastrar Processo <FiRepeat size={20}/>
+                                Cadastrar Task <FaTasks size={20}/>
                             </button>
                         </form>
                    

@@ -7,9 +7,12 @@ import processController from "../../controllers/process.controller";
 
 const processRouter = Router()
 
-
-processRouter.use("/create", authMiddleware, processController.create )
+// Processos
+processRouter.use("/create/:id_module", authMiddleware, processController.create )
 processRouter.get("/:id_module/all", authMiddleware, processController.findAll)
 
+// Tasks
+processRouter.get("/task/:id_process", authMiddleware, processController.findAllTasks)
+processRouter.post("/task/create/:id_process", authMiddleware, processController.createTask)
 
 export default processRouter

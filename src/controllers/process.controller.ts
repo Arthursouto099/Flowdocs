@@ -10,7 +10,7 @@ const processController = {
 
             const data = await processService.create({
                 data: {
-                    module: {connect: {id: req.body.id_module}},
+                    module: {connect: {id: req.params.id_module}},
                     name: req.body.name,
                     description: req.body.description,
                     user: {connect:  {id: req.credentials?.id}}
@@ -27,6 +27,39 @@ const processController = {
 
     },
 
+
+    createTask: async  (req: AuthRequest, res: Response, next: NextFunction) => {
+        try{
+            const data = await processService.createTask({data: {
+                process: {connect: {id: req.params.id_process}},
+                title: req.body.title,
+                description: req.body.description
+            }})
+            
+            resOk({res, status: 201, message: "Task criada com sucesso", data})
+        }
+        catch(e) {
+            next(e)
+        } 
+    },
+
+
+    findAllTasks: async (req: AuthRequest, res: Response, next: NextFunction) => {
+        try{
+            const data = await processService.findTasksByProcess({
+                pagination: {
+                    page: Number(req.query.page ?? 1),
+                    limit: Number(req.query.limit ?? 20)
+                },
+                id_process: req.params.id_process
+            })
+
+            resOk({res, status: 200, message: "Busca feita com sucesso", data})
+        }
+        catch(e) {
+            next(e)
+        }
+    },
 
     findAll: async (req: AuthRequest, res: Response, next: NextFunction) => {
         try {
