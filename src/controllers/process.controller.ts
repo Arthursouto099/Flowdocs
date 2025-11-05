@@ -33,7 +33,8 @@ const processController = {
             const data = await processService.createTask({data: {
                 process: {connect: {id: req.params.id_process}},
                 title: req.body.title,
-                description: req.body.description
+                description: req.body.description,
+                user: {connect: {id: req.credentials?.id}}
             }})
             
             resOk({res, status: 201, message: "Task criada com sucesso", data})
@@ -54,12 +55,32 @@ const processController = {
                 id_process: req.params.id_process
             })
 
+            
+
             resOk({res, status: 200, message: "Busca feita com sucesso", data})
         }
         catch(e) {
             next(e)
         }
     },
+
+    
+
+    changeTaskState: async (req: AuthRequest, res: Response, next: NextFunction) => {
+        try{
+            const data = await processService.changeTaskState({
+                id_task: req.params.id_task,
+                oldState: req.body.old_state
+            })
+
+            resOk({res, status: 200, message: "Alteração feita com sucesso", data})
+
+        }
+        catch(e) {
+            next(e)
+        }
+    }
+    ,
 
     findAll: async (req: AuthRequest, res: Response, next: NextFunction) => {
         try {

@@ -44,7 +44,7 @@ export default function ModulePage() {
         findProcces({ id_module: id!, page, set: setProcess, token })
     }, [page, id, name, token])
 
-    console.log(process)
+  
 
     return (
         <section className="h-screen w-screen">
@@ -66,7 +66,7 @@ export default function ModulePage() {
                 </div>
 
                 <div className="w-full pt-5 overflow-x-auto ">
-                    <ProcessList data={process}/>
+                    <ProcessList onUpdate={ async () =>  {await findProcces({ id_module: id!, page, set: setProcess, token })}} data={process}/>
                 </div>
 
 

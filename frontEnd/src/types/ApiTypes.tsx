@@ -48,14 +48,17 @@ export type User = {
     created_at: Date | null;
     updated_at: Date | null;
     password: string;
+        profile_image?: string
 }
 
 export type Task = {
     id_process: string;
     id: string;
     description: string;
-    status: "CONCLUIDA" | "EM_ANDAMENTO" | "PENDENTRE";
+    status: "CONCLUIDA"  | "PENDENTE";
     title: string;
+    user: User
+
 }
 
 

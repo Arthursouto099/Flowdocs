@@ -43,7 +43,6 @@ model processes {
   created_at  DateTime? @default(now()) 
   updated_at  DateTime?  @default(now()) 
   created_by  String?  
-  collaborators users[] @relation("Collaborators") 
   files       files[]
   user       users?    @relation("Created_by" ,fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   id_module String
@@ -63,16 +62,16 @@ model users {
   activity_log activity_log[]
   files        files[]
   processes    processes[] @relation("Created_by")
-  collaborators processes[] @relation("Collaborators")
   orgs           Org[]           @relation("Owner")
   collaboratorInOrgs Org[]       @relation("Collaborators_org")
   modules module[] @relation("CreatedByMe")
-
+  collaboratorInModules module[] @relation("Module_Collaborators")
+  tasks task[] @relation("Task_created_by_me")
+  profile_image String?  @default("")
 }
 
 enum TaskStatus {
   CONCLUIDA
-  EM_ANDAMENTO
   PENDENTE
 }
 
@@ -80,9 +79,11 @@ model task {
   id String @id @default(uuid())
   title String
   description String
-  status TaskStatus @default(EM_ANDAMENTO)
+  status TaskStatus @default(PENDENTE)
   id_process String
   process processes @relation(fields: [id_process], references: [id])
+  created_by String
+  user users @relation("Task_created_by_me", fields: [created_by], references: [id])
   
 
 }
@@ -97,6 +98,7 @@ model module  {
   identifier_code String
   created_by String
   created_at DateTime @default(now())
+  module_collaborators users[] @relation("Module_Collaborators")
   user users @relation("CreatedByMe", fields: [created_by], references: [id])
   org Org @relation(fields: [identifier_code], references: [identifier_code])
 

@@ -31,7 +31,9 @@ const moduleService = {
                         { created_by: identifierOrg.id }
                     ]
                 }, skip: skip, take: pagination.limit,
-                include: { processes: true, user: true, org: true }
+                include: { processes: true, user: true, org: true, 
+                    module_collaborators: {omit: {password: true}}
+                 }
             })
         }
         catch (e) {

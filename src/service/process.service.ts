@@ -48,8 +48,8 @@ const processService = {
             include: {
                 user: { omit: { password: true } },
                 files: true,
-                collaborators: { omit: { password: true } },
-                tasks: true
+                tasks: {include: {user: {select: {name: true, id: true, email: true, profile_image: true}}}}
+
             }
         }) ?? []
 
@@ -84,9 +84,30 @@ const processService = {
         return await prisma.task.findMany({
             skip: skip,
             take: pagination.limit,
-            where: { id_process }
+            where: { id_process },
+            include: {user: true}
         }) ?? []
 
+    }, 
+    changeTaskState: async ({id_task, oldState}: {id_task: string, oldState: string}) => {
+        try{
+            const newStatus = oldState === "PENDENTE" ? "CONCLUIDA" : "PENDENTE";
+            const result =  await prisma.$transaction( async (tx) => {
+                const updated = await tx.task.update({
+                    where: {id: id_task},
+                    data: {status: newStatus}
+                })
+                const user = await tx.users.findUnique({where: {id: updated.created_by}, select: {name: true}})
+                const log = await tx.activity_log.create({data: {message: `${user?.name} alterou o estado da task ${updated.title} para ${newStatus} `, action: "CREATE_TASK"}})
+                
+                return {updated, log}
+            })
+
+            return result
+        }
+        catch(e: unknown){
+            throw new ProccessError((e as Error).message)
+        }
     }
 }
 

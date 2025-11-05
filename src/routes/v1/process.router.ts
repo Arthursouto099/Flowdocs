@@ -14,5 +14,5 @@ processRouter.get("/:id_module/all", authMiddleware, processController.findAll)
 // Tasks
 processRouter.get("/task/:id_process", authMiddleware, processController.findAllTasks)
 processRouter.post("/task/create/:id_process", authMiddleware, processController.createTask)
-
+processRouter.put("/task/change/:id_task", authMiddleware, processController.changeTaskState)
 export default processRouter
