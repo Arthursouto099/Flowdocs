@@ -8,6 +8,7 @@ import UserLoggedProvider from "./Providers/UserLoggedProvider";
 import Home from "./pages/Home";
 import SideBarLayout from "./layouts/SideBarLayout";
 import ModulePage from "./pages/ModulePage";
+import Collaborators from "./pages/Collaborators";
 
 const ToastStyleProvider = () => {
     const { darkMode } = UseTheme()
@@ -31,7 +32,8 @@ export default function RouterApp() {
                         <Route path="/login" element={<Login />} />
                         <Route path="module/:name/:id" element={<ModulePage/>}/>
                         <Route path="/" element={<SideBarLayout/>}>
-                            <Route path="/home" element={<Home/>} />
+                        <Route path="/home" element={<Home/>} />
+                        <Route path="/collaborators" element={<Collaborators/>}/>
                             
                         </Route>
                      

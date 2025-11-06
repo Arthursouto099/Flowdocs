@@ -15,20 +15,28 @@ const authService = {
             if (!isOrg) throw new AuthError("Organização não existe")
 
 
-            const isEx = await prisma.users.findUnique({ where: { email: data.email }, include: { orgs: { select: { id: true } }, collaboratorInOrgs: { select: { id: true } } } })
-            if (!isEx) throw new AuthError("email não existe")
+            const user = await prisma.users.findFirst({
+                where : {
+                    OR: [
+                        {orgMemberships: {some: {org_id: isOrg.id}}},
+                        {orgs: {some: {identifier_code: data.identifier_code}}}
+                    ]
+                }
+            })
+            if (!user) throw new AuthError("email não existe")
 
-            if (! await bcrypt.compare(data.password, isEx.password)) throw new AuthError("Senha incorreta")
+            if (! await bcrypt.compare(data.password, user.password)) throw new AuthError("Senha incorreta")
 
 
 
             const token = sign({
-                email: isEx.email,
-                id: isEx.id,
-                role: isEx.role,
+                email: user.email,
+                id: user.id,
+                role: user.role,
                 orgId: isOrg.id,
                 identifier_code: isOrg.identifier_code,
-                name: isEx.name
+                name: user.name
+                
             } as { email: string, id: string, role?: string, orgId: string, name: string },
                 process.env.JWT_SECRET!,
                 { expiresIn: "7d" })

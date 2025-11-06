@@ -27,7 +27,7 @@ const moduleService = {
             return await prisma.module.findMany({
                 where: {
                     AND: [
-                        { identifier_code: identifierOrg.identifier_code },
+                        { org_id: identifierOrg.identifier_code },
                         { created_by: identifierOrg.id }
                     ]
                 }, skip: skip, take: pagination.limit,

@@ -1,5 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
-import { FaHome, FaUser, FaCog } from "react-icons/fa"; // Ícones de UI
+import { FaHome, FaUser, FaCog, FaUsers } from "react-icons/fa"; // Ícones de UI
 import UseTheme from "../hooks/UseTheme";
 import Card from "../components/ui/Card";
 import { UseUserCredentials } from "../hooks/UseUserCredentials";
@@ -26,16 +26,16 @@ export default function SideBarLayout() {
                     </div>
 
                     <Link
-                        to="/"
+                        to="/home"
                         className="p-3  flex items-center gap-2"
                     >
                         <FaHome size={15} /> Home
                     </Link>
                     <Link
-                        to="/profile"
+                        to="/collaborators"
                         className="p-3  flex items-center gap-2"
                     >
-                        <FaUser size={15} /> Perfil
+                        <FaUsers size={15} /> Colaboradores
                     </Link>
                     <Link
                         to="/settings"

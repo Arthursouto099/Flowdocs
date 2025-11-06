@@ -1,6 +1,6 @@
 import { Router } from "express";
 import authMiddleware from "../../middlewares/auth.middleware";
-import { usersController } from "../../controllers/users.controllers";
+import { usersController } from "../../controllers/users.controller";
 import { authController } from "../../controllers/auth.controller";
 
 
@@ -15,5 +15,11 @@ userRouter.get("/:id", usersController.getUnique )
 userRouter.post("/create", usersController.create)
 userRouter.put("/update/:id", authMiddleware, usersController.update )
 userRouter.delete("/delete", authMiddleware, usersController.delete)
+
+// -> colaboradores
+
+
+
+userRouter.post("/collaborator/create", authMiddleware, usersController.addCollaborator)
 
 export default userRouter

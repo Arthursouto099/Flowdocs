@@ -65,6 +65,28 @@ export const usersController = {
         catch (e) {
             next(e)
         }
+    },
+
+
+    // Colaboradores
+
+    addCollaborator: async (req: AuthRequest, res: Response, next: NextFunction) => {
+          try {
+             const {name, password, email} = req.body  
+            const data = await usersServices.addCollaborator({
+                data: {
+                    name: name,
+                    password: password,
+                    email: email
+                },
+                orgIdentifier: req.credentials?.identifier_code!
+            })
+
+            resOk({ res, status: 201, message: "created successfuly", data })
+        }
+        catch (e) {
+            next(e)
+        }
     }
 
 

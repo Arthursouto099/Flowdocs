@@ -9,16 +9,15 @@ datasource db {
 }
 
 model activity_log {
-  id         String  @id  @default(uuid())
+  id         String    @id @default(uuid())
   action     String?
   message    String?
   created_at DateTime? @default(now())
-  file_id    String?   
-  user_id    String?   
+  file_id    String?
+  user_id    String?
   files      files?    @relation(fields: [file_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users      users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
 
 model files {
   id           String         @id @default(uuid())
@@ -26,48 +25,52 @@ model files {
   file_url     String
   type         String?        @default("OTHER")
   size         Int?
-  uploaded_at  DateTime?      @default(now()) 
-  uploaded_by  String?        
-  process_id   String?        
+  uploaded_at  DateTime       @updatedAt
+  uploaded_by  String?
+  process_id   String?
   activity_log activity_log[]
   processes    processes?     @relation(fields: [process_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users        users?         @relation(fields: [uploaded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-
 model processes {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String?
-  status      String?   @default("ATIVO")
-  created_at  DateTime? @default(now()) 
-  updated_at  DateTime?  @default(now()) 
-  created_by  String?  
+  status      String?  @default("ATIVO")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  created_by  String?
   files       files[]
-  user       users?    @relation("Created_by" ,fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  id_module String
-  module  module @relation(fields: [id_module], references: [id])
-    tasks task[]
+  user        users?   @relation("CreatedBy", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id_module   String
+  module      module   @relation(fields: [id_module], references: [id])
+  tasks       task[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+enum roleUser {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
 model users {
-  id           String        @id @default(uuid())
-  name         String
-  email        String         @unique
-  role         String?        @default("COLABORADOR")
-  created_at   DateTime?      @default(now()) 
-  updated_at   DateTime?      @default(now()) 
-  password String 
-  activity_log activity_log[]
-  files        files[]
-  processes    processes[] @relation("Created_by")
-  orgs           Org[]           @relation("Owner")
-  collaboratorInOrgs Org[]       @relation("Collaborators_org")
-  modules module[] @relation("CreatedByMe")
-  collaboratorInModules module[] @relation("Module_Collaborators")
-  tasks task[] @relation("Task_created_by_me")
-  profile_image String?  @default("")
+  id                    String         @id @default(uuid())
+  name                  String
+  email                 String         @unique
+  role                  roleUser       @default(VIEWER)
+  created_at            DateTime?      @default(now())
+  updated_at            DateTime?      @default(now())
+  password              String
+  activity_log          activity_log[]
+  files                 files[]
+  processes             processes[]    @relation("CreatedBy")
+  orgs                  Org[]          @relation("OwnerOrgs")
+  modules               module[]       @relation("CreatedBy")
+  collaboratorInModules module[]       @relation("ModuleCollaborators")
+  tasks                 task[]         @relation("TaskCreateBy")
+  profile_image         String?        @default("")
+  orgMemberships OrgUser[]   
 }
 
 enum TaskStatus {
@@ -76,42 +79,48 @@ enum TaskStatus {
 }
 
 model task {
-  id String @id @default(uuid())
-  title String
+  id          String     @id @default(uuid())
+  title       String
   description String
-  status TaskStatus @default(PENDENTE)
-  id_process String
-  process processes @relation(fields: [id_process], references: [id])
-  created_by String
-  user users @relation("Task_created_by_me", fields: [created_by], references: [id])
-  
-
+  status      TaskStatus @default(PENDENTE)
+  id_process  String
+  process     processes  @relation(fields: [id_process], references: [id])
+  created_by  String
+  user        users      @relation("TaskCreateBy", fields: [created_by], references: [id])
 }
 
-
-model module  {
-  id String @id @default(uuid())
-  name String
-  description String
-  processes processes[] 
+model module {
+  id                   String      @id @default(uuid())
+  name                 String
+  description          String
+  processes            processes[]
   background_image_url String?
-  identifier_code String
-  created_by String
-  created_at DateTime @default(now())
-  module_collaborators users[] @relation("Module_Collaborators")
-  user users @relation("CreatedByMe", fields: [created_by], references: [id])
-  org Org @relation(fields: [identifier_code], references: [identifier_code])
-
+  org_id               String
+  created_by           String
+  created_at           DateTime    @default(now())
+  module_collaborators users[]     @relation("ModuleCollaborators")
+  user                 users       @relation("CreatedBy", fields: [created_by], references: [id])
+  org                  Org         @relation(fields: [org_id], references: [identifier_code])
 }
 
-model Org{
-  id               String    @id @default(uuid())
-  name             String
-  identifier_code  String @default(ulid()) @unique
-  created_at       DateTime  @default(now())
-  updated_at       DateTime  @updatedAt
-  created_by       String
-  owner            users     @relation("Owner", fields: [created_by], references: [id])
-  collaborators_org users[]  @relation("Collaborators_org")
-  module module[]
+model Org {
+  id              String   @id @default(uuid())
+  name            String
+  identifier_code String   @unique @default(ulid())
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  created_by      String
+  module          module[]
+  owner           users    @relation("OwnerOrgs", fields: [created_by], references: [id])
+  members OrgUser[]
+}
+
+model OrgUser {
+  id        String   @id @default(uuid())
+  org_id    String
+  user_id  String
+  role      roleUser @default(VIEWER)
+  joined_at DateTime @default(now())
+  org  Org   @relation(fields: [org_id], references: [id])
+  user users @relation(fields: [user_id], references: [id])
 }
